@@ -11,6 +11,35 @@ let attendanceCollection;
 app.use(cors());
 app.use(express.json());
 
+// Initialize MongoDB connection and ensure it's available before handling routes
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) return;
+
+  try {
+    await client.connect();
+    const db = client.db('hrms');
+    employeesCollection = db.collection('employees');
+    attendanceCollection = db.collection('attendance');
+    isConnected = true;
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    throw error;
+  }
+}
+
+// Middleware to ensure DB connection for every request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const validateEmployee = (payload) => {
@@ -173,34 +202,6 @@ app.delete('/api/attendance/:attendanceId', async (req, res) => {
   }
 });
 
-// Initialize MongoDB connection and start listening for serverless handler
-let isConnected = false;
-
-async function connectDB() {
-  if (isConnected) return;
-
-  try {
-    await client.connect();
-    const db = client.db('hrms');
-    employeesCollection = db.collection('employees');
-    attendanceCollection = db.collection('attendance');
-    isConnected = true;
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    throw error;
-  }
-}
-
-// Middleware to ensure DB connection
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    res.status(500).json({ error: 'Database connection failed' });
-  }
-});
 
 // Export for Vercel serverless
 module.exports = app;
