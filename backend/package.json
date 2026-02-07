@@ -5,7 +5,10 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "node src/index.js",
-    "start": "node src/index.js"
+    "start": "node api/index.js"
+  },
+  "engines": {
+    "node": "18.x"
   },
   "dependencies": {
     "cors": "2.8.5",
