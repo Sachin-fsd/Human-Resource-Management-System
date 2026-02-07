@@ -4,9 +4,10 @@ const { MongoClient } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const MONGODB_URI =
-  process.env.MONGODB_URI ||
-  'mongodb+srv://hrms_user:hrms_password@hrms-lite-cluster.7x3s9.mongodb.net/hrms_lite?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI
+// const MONGODB_URI =
+//   process.env.MONGODB_URI ||
+//   'mongodb+srv://sachineducational:sachin@cluster0.mybvg88.mongodb.net/hrms?retryWrites=true&w=majority';
 
 const client = new MongoClient(MONGODB_URI);
 let employeesCollection;
